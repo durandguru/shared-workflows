@@ -1,0 +1,8 @@
+name: Greeting on variable day
+
+jobs:
+  greeting_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Say Hello Mona it's Monday"
+        run: echo "dit is een ${{ vars.TESTJE}} . !"
