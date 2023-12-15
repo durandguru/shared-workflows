@@ -19,4 +19,8 @@ jobs:
         run: |
           echo "dit is een ${{ vars.TESTJE}} !"
           echo "dit is 2e ${{ vars.TEST789}} !"
+          echo "dit is 2e ${{ vars.DG}} !"
           echo "dit is een secret ${{ secrets.TEST}} !"
+
+      - name: "Say DG!"
+        run: echo "dit is 2e ${{ vars.DG}} !"
