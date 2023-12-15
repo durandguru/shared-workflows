@@ -7,7 +7,7 @@ on:
         required: true
         type: string
     secrets:
-      MY_SECRET: 
+      TEST: 
         required: true
           
 jobs:
