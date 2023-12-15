@@ -6,6 +6,9 @@ on:
       ENVIRONMENT:
         required: true
         type: string
+    secrets:
+      MY_SECRET: 
+        required: true
           
 jobs:
   greeting_job:
