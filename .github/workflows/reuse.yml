@@ -1,11 +1,16 @@
 name: Greeting on variable day
 
 on:
-  workflow_call
-  
+  workflow_call:
+    inputs:
+      ENVIRONMENT:
+        required: true
+        type: string
+          
 jobs:
   greeting_job:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.ENVIRONMENT }}
     steps:
       - name: "Say Hello Mona it's Monday"
         run: echo "dit is een ${{ vars.TESTJE}} . !"
