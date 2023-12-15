@@ -16,4 +16,7 @@ jobs:
     environment: ${{ inputs.ENVIRONMENT }}
     steps:
       - name: "Say Hello Mona it's Monday"
-        run: echo "dit is een ${{ vars.TESTJE}} . !"
+        run: |
+          echo "dit is een ${{ vars.TESTJE}} !"
+          echo "dit is 2e ${{ vars.TEST789}} !"
+          echo "dit is een secret ${{ secrets.TEST}} !"
