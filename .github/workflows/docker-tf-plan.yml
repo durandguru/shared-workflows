@@ -86,4 +86,4 @@ jobs:
 
       # Terraform Plan
       - name: Terraform Plan
-        run: terraform -chdir=./${{ inputs.ENVIRONMENT }} plan -var-file='../variables.tfvars' -auto-approve
+        run: terraform -chdir=./${{ inputs.ENVIRONMENT }} plan -var-file='../variables.tfvars'
