@@ -23,10 +23,6 @@ env:
   ARM_CLIENT_ID: "${{ vars.SHARED_AZURE_CLIENT_ID }}"
   ARM_SUBSCRIPTION_ID: "${{ vars.SHARED_AZURE_SUBSCRIPTION_ID }}"
   ARM_TENANT_ID: "${{ vars.SHARED_AZURE_TENANT_ID }}"
-
-# defaults:
-#   run:
-#     working-directory: ./${{ inputs.ENVIRONMENT }}
           
 jobs:
   tfapply:
@@ -34,18 +30,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.ENVIRONMENT }}
     steps:
-      # - name: "Say Hello Mona it's Monday"
-      #   run: |
-      #     echo "dit is sshhost ${{ vars.SSH_HOST }} !"
-      #     echo "dit is sshuser ${{ vars.SSH_USER }} !"
-      #     echo "dit is wgclientip ${{ vars.WG_CLIENT_IP }} !"
-      #     echo "dit is wgendpoint ${{ vars.SHARED_WG_SERVER_ENDPOINT }} !"
-      #     echo "dit is wgipspace ${{ vars.SHARED_WG_SERVER_IPSPACE }} !"
-      #     echo "dit is wgpupkey ${{ vars.SHARED_WG_SERVER_PUBLICKEY }} !"
-      #     echo "dit is aztenant ${{ vars.SHARED_AZURE_TENANT_ID }} !"
-      #     echo "dit is azclientd ${{ vars.SHARED_AZURE_CLIENT_ID }} !"
-      #     echo "dit is azsub ${{ vars.SHARED_AZURE_SUBSCRIPTION_ID }} !"
-      
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v4
