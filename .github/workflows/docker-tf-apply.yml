@@ -84,6 +84,6 @@ jobs:
       - name: Terraform Init
         run: terraform -chdir=./${{ inputs.ENVIRONMENT }} init
 
-      # Terraform Plan
-      - name: Terraform Plan
-        run: terraform -chdir=./${{ inputs.ENVIRONMENT }} plan -var-file='../variables.tfvars'
+      # Terraform Apply
+      - name: Terraform Apply
+        run: terraform -chdir=./${{ inputs.ENVIRONMENT }} apply -var-file='../variables.tfvars' -auto-approve
