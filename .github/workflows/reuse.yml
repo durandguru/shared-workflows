@@ -24,9 +24,9 @@ env:
   ARM_SUBSCRIPTION_ID: "${{ vars.SHARED_AZURE_SUBSCRIPTION_ID }}"
   ARM_TENANT_ID: "${{ vars.SHARED_AZURE_TENANT_ID }}"
 
-defaults:
-  run:
-    working-directory: ./spcon301
+# defaults:
+#   run:
+#     working-directory: ./${{ inputs.ENVIRONMENT }}
           
 jobs:
   tfapply:
@@ -98,8 +98,8 @@ jobs:
 
       # Terraform Init
       - name: Terraform Init
-        run: terraform init
+        run: terraform -chdir=./${{ inputs.ENVIRONMENT }} init
 
       # Terraform Plan
       - name: Terraform Plan
-        run: terraform plan -var-file='../variables.tfvars'
+        run: terraform -chdir=./${{ inputs.ENVIRONMENT }} plan -var-file='../variables.tfvars'
