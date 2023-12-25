@@ -1,4 +1,4 @@
-name: Terraform Apply
+name: Terraform Plan
 
 on:
   workflow_call:
@@ -25,8 +25,8 @@ env:
   ARM_TENANT_ID: "${{ vars.SHARED_AZURE_TENANT_ID }}"
           
 jobs:
-  tfapply:
-    name: "Terraform Apply"
+  tfplan:
+    name: "Terraform Plan"
     runs-on: ubuntu-latest
     environment: ${{ inputs.ENVIRONMENT }}
     steps:
