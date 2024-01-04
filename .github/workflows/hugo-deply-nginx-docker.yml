@@ -49,14 +49,6 @@ jobs:
           sudo wg set wg0 listen-port 48123 private-key privatekey peer ${{ vars.SHARED_WG_SERVER_PUBLICKEY }} allowed-ips ${{ vars.SHARED_WG_SERVER_IPSPACE }} endpoint ${{ vars.SHARED_WG_SERVER_ENDPOINT }}
           sudo ip link set up dev wg0
           sudo ip route add ${{ vars.SHARED_WG_SERVER_IPSPACE }} dev wg0
-
-      # # Write Private SSH Key
-      # - name: Write Key Files
-      #   run: |
-      #     mkdir -p ~/.ssh/ && touch ~/.ssh/known_hosts
-      #     ssh-keyscan ${{ vars.SSH_HOST }} >> ~/.ssh/known_hosts
-      #     echo "${{ secrets.SSH_KEY }}" >> ~/.ssh/id_rsa
-      #     chmod 600 ~/.ssh/id_rsa
     
       # Deploy build website with rsync to host
       - name: Deploy website with rsync
