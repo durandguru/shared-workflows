@@ -56,7 +56,7 @@ jobs:
         with:
           switches: -avzr --quiet --delete
           path: public/
-          remote_path: ${{ vars.GIT_FOLDER }}
+          remote_path: ${{ vars.SSH_PATH }}
           remote_host: ${{ vars.SSH_HOST }}
           remote_user: ${{ vars.SSH_USER }}
           remote_key: ${{ secrets.SSH_KEY }}
