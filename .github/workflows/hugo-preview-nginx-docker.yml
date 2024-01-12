@@ -56,7 +56,7 @@ jobs:
         with:
           switches: -avzr --quiet --delete
           path: public/
-          remote_path: "${{ vars.SSH_PATH }}/${{ github.event.number }}"
+          remote_path: "${{ vars.SSH_PREVIEW_PATH }}/${{ github.event.number }}"
           remote_host: ${{ vars.SSH_HOST }}
           remote_user: ${{ vars.SSH_USER }}
           remote_key: ${{ secrets.SSH_KEY }}
