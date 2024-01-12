@@ -26,7 +26,7 @@ jobs:
           submodules: true
 
       - name: Start deployment
-        uses: bobheadxi/deployments@v0.6.0
+        uses: bobheadxi/deployments@v1.4.0
         id: deployment
         with:
           step: start
@@ -72,7 +72,7 @@ jobs:
           remote_key: ${{ secrets.SSH_KEY }}
 
       - name: Finish deployment
-        uses: bobheadxi/deployments@v0.6.0
+        uses: bobheadxi/deployments@v1.4.0
         if: always()
         with:
           step: finish
@@ -84,7 +84,7 @@ jobs:
           auto_inactive: false
 
       - name: Find PR comment
-        uses: peter-evans/find-comment@v1
+        uses: peter-evans/find-comment@v2.4.0
         id: fc
         with:
           issue-number: ${{ github.event.number }}
@@ -92,7 +92,7 @@ jobs:
           body-includes: "preview of this pull request"
   
       - name: Comment on PR
-        uses: peter-evans/create-or-update-comment@v1
+        uses: peter-evans/create-or-update-comment@v3.1.0
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ github.event.number }}
