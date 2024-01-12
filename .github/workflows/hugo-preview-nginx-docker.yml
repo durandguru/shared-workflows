@@ -33,7 +33,6 @@ jobs:
           token: ${{ github.token }}
           env: pr-${{ github.event.number }}
           ref: ${{ github.head_ref }}
-          no_override: false
 
       # Setup Hugo
       - name: Setup Hugo
@@ -80,7 +79,6 @@ jobs:
           status: ${{ job.status }}
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
           env_url: "https://preview.atletiekregels.nl/${{ github.event.number }}/"
-          no_override: true
           auto_inactive: false
 
       - name: Find PR comment
