@@ -1,0 +1,54 @@
+name: Hugo Preview Cleanup an Nginx Docker
+
+on:
+  workflow_call:
+    secrets:
+      WG_CLIENT_PRIVATEKEY: 
+        required: true
+      SSH_KEY: 
+        required: true
+
+#Special permissions required for OIDC authentication
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+  deployments: write
+
+jobs:
+  hugo-preview-cleanup-nginx-docker:
+    name: "Hugo Preview Cleanup an Nginx Docker"
+    runs-on: ubuntu-latest
+    steps:
+      # Wireguard - Install
+      - name: Wireguard - Install
+        run: sudo apt install wireguard wireguard-tools
+
+      # Wireguard - Setup
+      - name: Wireguard - Setup
+        run: | 
+          echo "${{ secrets.WG_CLIENT_PRIVATEKEY }}" > privatekey
+          sudo ip link add dev wg0 type wireguard
+          sudo ip address add dev wg0 ${{ vars.WG_CLIENT_IP }}
+          sudo wg set wg0 listen-port 48123 private-key privatekey peer ${{ vars.SHARED_WG_SERVER_PUBLICKEY }} allowed-ips ${{ vars.SHARED_WG_SERVER_IPSPACE }} endpoint ${{ vars.SHARED_WG_SERVER_ENDPOINT }}
+          sudo ip link set up dev wg0
+          sudo ip route add ${{ vars.SHARED_WG_SERVER_IPSPACE }} dev wg0
+
+      - name: Setup SSH
+        uses: kielabokkie/ssh-key-and-known-hosts-action@v1.3.5
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+          ssh-host: ${{ vars.SSH_HOST }}
+          ssh-port: 22
+
+      - name: Delete pull request on server
+        run:
+          ssh -p 22 ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} rm -r "${{ vars.SSH_PREVIEW_PATH }}/${{ github.event.number }}/"
+      
+      - name: Deactivate deployment
+        uses: bobheadxi/deployments@v1.4.0
+        with:
+          step: deactivate-env
+          token: ${{ github.token }}
+          env: pr-${{ github.event.number }}
+          desc: Deployment was pruned
