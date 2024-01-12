@@ -79,7 +79,7 @@ jobs:
           token: ${{ github.token }}
           status: ${{ job.status }}
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
-          env_url: "https://preview.atletiekregels.nl/${{ github.event.number }}/"
+          env: "https://preview.atletiekregels.nl/${{ github.event.number }}/"
           auto_inactive: false
 
       - name: Find PR comment
