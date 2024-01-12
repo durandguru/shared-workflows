@@ -25,6 +25,16 @@ jobs:
         with:
           submodules: true
 
+      - name: Start deployment
+        uses: bobheadxi/deployments@v0.6.0
+        id: deployment
+        with:
+          step: start
+          token: ${{ github.token }}
+          env: pr-${{ github.event.number }}
+          ref: ${{ github.head_ref }}
+          no_override: false
+
       # Setup Hugo
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2.6.0
@@ -34,7 +44,7 @@ jobs:
 
       # Build Hugo Website
       - name: Build website with Hugo
-        run: hugo --minify
+        run: hugo --minify --baseURL "https://preview.atletiekregels.nl/${{ github.event.number }}"
 
       # Wireguard - Install
       - name: Wireguard - Install
@@ -60,7 +70,7 @@ jobs:
           remote_host: ${{ vars.SSH_HOST }}
           remote_user: ${{ vars.SSH_USER }}
           remote_key: ${{ secrets.SSH_KEY }}
-          
+
       - name: Finish deployment
         uses: bobheadxi/deployments@v0.6.0
         if: always()
