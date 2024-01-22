@@ -81,4 +81,4 @@ jobs:
 
       # Terraform Apply
       - name: Terraform Apply
-        run: terraform plan -var-file=${{ inputs.ENVIRONMENT }}/${{ inputs.ENVIRONMENT }}.tfvars
+        run: terraform apply -var-file=${{ inputs.ENVIRONMENT }}/${{ inputs.ENVIRONMENT }}.tfvars -auto-approve
