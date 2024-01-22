@@ -52,9 +52,8 @@ jobs:
       # Add Self Signed Root CA
       - name: Add Self Signed Root CA
         run: |
-          sudo mkdir /usr/share/ca-certificates/extra
-          sudo wget -O /usr/share/ca-certificates/extra/Durand-Guru-Root-CA.crt "https://durand.nl/Durand-Guru-Root-CA.crt"
-          sudo dpkg-reconfigure ca-certificates
+          sudo wget -O /usr/local/share/ca-certificates/Durand-Guru-Root-CA.crt "https://durand.nl/Durand-Guru-Root-CA.crt"
+          sudo update-ca-certificates
 
       # Terraform Setup
       - name: Setup Terraform
