@@ -7,7 +7,7 @@ on:
         required: true
         type: string
     secrets:
-      WG_CLIENT_PRIVATEKEY: 
+      SHARED_WG_CLIENT_PRIVATEKEY: 
         required: true
       TF_VAR_network_password: 
         required: true
