@@ -23,7 +23,7 @@ env:
   ARM_CLIENT_ID: "${{ vars.SHARED_AZURE_CLIENT_ID }}"
   ARM_SUBSCRIPTION_ID: "${{ vars.SHARED_AZURE_SUBSCRIPTION_ID }}"
   ARM_TENANT_ID: "${{ vars.SHARED_AZURE_TENANT_ID }}"
-  TF_VAR_NETWORK_PASSWORD: "${{ secrets.TF_VAR_NETWORK_PASSWORD }}"
+  TF_VAR_network_pasword: "${{ secrets.TF_VAR_NETWORK_PASSWORD }}"
 
           
 jobs:
