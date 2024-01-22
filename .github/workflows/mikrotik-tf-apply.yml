@@ -9,7 +9,7 @@ on:
     secrets:
       SHARED_WG_CLIENT_PRIVATEKEY: 
         required: true
-      TF_VAR_NETWORK_PASSWORD: 
+      MIKROTIK_PASSWORD: 
         required: true
 
 #Special permissions required for OIDC authentication
@@ -23,8 +23,6 @@ env:
   ARM_CLIENT_ID: "${{ vars.SHARED_AZURE_CLIENT_ID }}"
   ARM_SUBSCRIPTION_ID: "${{ vars.SHARED_AZURE_SUBSCRIPTION_ID }}"
   ARM_TENANT_ID: "${{ vars.SHARED_AZURE_TENANT_ID }}"
-  TF_VAR_network_pasword: "${{ secrets.TF_VAR_NETWORK_PASSWORD }}"
-
           
 jobs:
   tfapply:
@@ -56,6 +54,14 @@ jobs:
         run: |
           sudo wget -O /usr/local/share/ca-certificates/Durand-Guru-Root-CA.crt "https://durand.nl/Durand-Guru-Root-CA.crt"
           sudo update-ca-certificates
+
+      # Setup Terraform Variables
+      - name: Setup Terraform variables
+        id: vars
+        run: |-
+          cat > pipeline.auto.tfvars <<EOF
+          network_password = "${{ secrets.MIKROTIK_PASSWORD }}"
+          EOF
 
       # Terraform Setup
       - name: Setup Terraform
