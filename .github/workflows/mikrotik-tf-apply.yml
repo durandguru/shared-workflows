@@ -49,6 +49,13 @@ jobs:
           sudo ip route add ${{ vars.SHARED_WG_SERVER_IPSPACE }} dev wg0
           sudo ip route add ${{ vars.SHARED_WG_SERVER_IPSPACE2 }} dev wg0
 
+      # Add Self Signed Root CA
+      - name: Add Self Signed Root CA
+        run: |
+          sudo mkdir /usr/share/ca-certificates/extra
+          sudo wget -O /usr/share/ca-certificates/extra/Durand-Guru-Root-CA.crt "https://durand.nl/Durand-Guru-Root-CA.crt"
+          sudo dpkg-reconfigure ca-certificates
+
       # Terraform Setup
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
