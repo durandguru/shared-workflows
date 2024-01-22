@@ -9,7 +9,7 @@ on:
     secrets:
       SHARED_WG_CLIENT_PRIVATEKEY: 
         required: true
-      TF_VAR_network_password: 
+      TF_VAR_NETWORK_PASSWORD: 
         required: true
 
 #Special permissions required for OIDC authentication
@@ -23,6 +23,8 @@ env:
   ARM_CLIENT_ID: "${{ vars.SHARED_AZURE_CLIENT_ID }}"
   ARM_SUBSCRIPTION_ID: "${{ vars.SHARED_AZURE_SUBSCRIPTION_ID }}"
   ARM_TENANT_ID: "${{ vars.SHARED_AZURE_TENANT_ID }}"
+  TF_VAR_NETWORK_PASSWORD: "${{ secrets.TF_VAR_NETWORK_PASSWORD }}"
+
           
 jobs:
   tfapply:
