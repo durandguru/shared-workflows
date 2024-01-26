@@ -56,18 +56,6 @@ jobs:
           echo "${{ secrets.SSH_KEY }}" >> ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-      # Update Docker Config on host
-      - name: Update Docker Config files on host
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ vars.SSH_HOST }}
-          username: ${{ vars.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: "22"
-          script: |
-            cd docker-config-files
-            git pull origin main
-
       # Terraform Setup
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
