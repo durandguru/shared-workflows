@@ -54,7 +54,7 @@ jobs:
         uses: Burnett01/rsync-deployments@6.0.0
         with:
           switches: -avzr --quiet --delete
-          path: spcon801/docker-config-files/
+          path: ${{ inputs.ENVIRONMENT }}/docker-config-files/
           remote_path: ${{ vars.DOCKER_CONFIG_PATH }}
           remote_host: ${{ vars.SSH_HOST }}
           remote_user: ${{ vars.SSH_USER }}
