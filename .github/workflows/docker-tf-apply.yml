@@ -87,3 +87,27 @@ jobs:
       # Terraform Apply
       - name: Terraform Apply
         run: terraform -chdir=./${{ inputs.ENVIRONMENT }} apply -var-file='../variables.tfvars' -auto-approve
+
+      - name: ntfy-success-notifications
+        uses: NiNiyas/ntfy-action@v1.0.4
+        if: success()
+        with:
+          url: ${{ vars.NTFY_SERVER }}
+          topic: ${{ vars.NTFY_TOPIC }}
+          details: Workflow has been successfully completed!
+      
+      - name: ntfy-failed-notifications
+        uses: NiNiyas/ntfy-action@v1.0.4
+        if: failure()
+        with:
+          url: ${{ vars.NTFY_SERVER }}
+          topic: ${{ vars.NTFY_TOPIC }}
+          details: Workflow has failed!
+
+      - name: ntfy-cancelled-notifications
+        uses: NiNiyas/ntfy-action@v1.0.4
+        if: cancelled()
+        with:
+          url: ${{ vars.NTFY_SERVER }}
+          topic: ${{ vars.NTFY_TOPIC }}
+          details: Workflow has been cancelled!
