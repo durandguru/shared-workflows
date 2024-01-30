@@ -60,3 +60,12 @@ jobs:
           remote_host: ${{ vars.SSH_HOST }}
           remote_user: ${{ vars.SSH_USER }}
           remote_key: ${{ secrets.SSH_KEY }}
+
+      - name: ntfy-success-notifications
+        uses: NiNiyas/ntfy-action@v1.0.4
+        if: success()
+        with:
+          url: 'https://ntfy.durand.guru'
+          topic: 'durand-guru'
+          priority: 5
+          details: Workflow has been successfully completed!
