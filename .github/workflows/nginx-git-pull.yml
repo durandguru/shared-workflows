@@ -57,13 +57,13 @@ jobs:
             cd ${{ vars.GIT_FOLDER }}
             git pull origin main
 
-            - name: ntfy-success-notifications
-            uses: NiNiyas/ntfy-action@v1.0.4
-            if: success()
-            with:
-              url: ${{ vars.NTFY_SERVER }}
-              topic: ${{ vars.NTFY_TOPIC }}
-              details: Workflow has been successfully completed!
+      - name: ntfy-success-notifications
+        uses: NiNiyas/ntfy-action@v1.0.4
+        if: success()
+        with:
+          url: ${{ vars.NTFY_SERVER }}
+          topic: ${{ vars.NTFY_TOPIC }}
+          details: Workflow has been successfully completed!
   
       - name: ntfy-failed-notifications
         uses: NiNiyas/ntfy-action@v1.0.4
