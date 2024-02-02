@@ -1,0 +1,103 @@
+name: Terraform Apply
+
+on:
+  workflow_call:
+    secrets:
+      SHARED_WG_CLIENT_PRIVATEKEY: 
+        required: true
+      MIKROTIK_PASSWORD: 
+        required: true
+
+#Special permissions required for OIDC authentication
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+#These environment variables are used by the terraform azure provider to setup OIDD authenticate. 
+env:
+  ARM_CLIENT_ID: "${{ vars.SHARED_AZURE_CLIENT_ID }}"
+  ARM_SUBSCRIPTION_ID: "${{ vars.SHARED_AZURE_SUBSCRIPTION_ID }}"
+  ARM_TENANT_ID: "${{ vars.SHARED_AZURE_TENANT_ID }}"
+          
+jobs:
+  tfapply:
+    name: "Terraform Apply"
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Wireguard - Install
+      - name: Wireguard - Install
+        run: sudo apt install wireguard wireguard-tools
+
+      # Wireguard - Setup
+      - name: Wireguard - Setup
+        run: | 
+          echo "${{ secrets.SHARED_WG_CLIENT_PRIVATEKEY }}" > privatekey
+          sudo ip link add dev wg0 type wireguard
+          sudo ip address add dev wg0 ${{ vars.SHARED_WG_CLIENT_IP }}
+          sudo wg set wg0 listen-port 48123 private-key privatekey peer ${{ vars.SHARED_WG_SERVER_PUBLICKEY }} allowed-ips '${{ vars.SHARED_WG_SERVER_IPSPACE }}, ${{ vars.SHARED_WG_SERVER_IPSPACE2 }}' endpoint ${{ vars.SHARED_WG_SERVER_ENDPOINT }}
+          sudo ip link set up dev wg0
+          sudo ip route add ${{ vars.SHARED_WG_SERVER_IPSPACE }} dev wg0
+          sudo ip route add ${{ vars.SHARED_WG_SERVER_IPSPACE2 }} dev wg0
+
+      # Add Self Signed Root CA
+      - name: Add Self Signed Root CA
+        run: |
+          sudo wget -O /usr/local/share/ca-certificates/Durand-Guru-Root-CA.crt "https://durand.nl/Durand-Guru-Root-CA.crt"
+          sudo update-ca-certificates
+
+      # Setup Terraform Variables
+      - name: Setup Terraform variables
+        id: vars
+        run: |-
+          cat > pipeline.auto.tfvars <<EOF
+          network_password = "${{ secrets.MIKROTIK_PASSWORD }}"
+          EOF
+
+      # Terraform Setup
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # Login to Azure CLI
+      - name: 'Az CLI login'
+        uses: Azure/login@v1.6.1
+        with:
+            client-id: ${{ vars.SHARED_AZURE_CLIENT_ID }}
+            tenant-id: ${{ vars.SHARED_AZURE_TENANT_ID }}
+            subscription-id: ${{ vars.SHARED_AZURE_SUBSCRIPTION_ID }}
+
+      # Terraform Init
+      - name: Terraform Init
+        run: terraform init -upgrade -reconfigure -backend-config=$device/$device.hcl
+
+      # Terraform Apply
+      - name: Terraform Apply
+        run: terraform apply -var-file=$device/$device.tfvars -auto-approve
+
+      - name: ntfy-success-notifications
+        uses: NiNiyas/ntfy-action@v1.0.4
+        if: success()
+        with:
+          url: ${{ vars.NTFY_SERVER }}
+          topic: ${{ vars.NTFY_TOPIC }}
+          details: Workflow has been successfully completed!
+      
+      - name: ntfy-failed-notifications
+        uses: NiNiyas/ntfy-action@v1.0.4
+        if: failure()
+        with:
+          url: ${{ vars.NTFY_SERVER }}
+          topic: ${{ vars.NTFY_TOPIC }}
+          details: Workflow has failed!
+
+      - name: ntfy-cancelled-notifications
+        uses: NiNiyas/ntfy-action@v1.0.4
+        if: cancelled()
+        with:
+          url: ${{ vars.NTFY_SERVER }}
+          topic: ${{ vars.NTFY_TOPIC }}
+          details: Workflow has been cancelled!
