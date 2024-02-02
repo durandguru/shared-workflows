@@ -2,6 +2,10 @@ name: Terraform Apply
 
 on:
   workflow_call:
+    inputs:
+      device:
+        required: true
+        type: string
     secrets:
       SHARED_WG_CLIENT_PRIVATEKEY: 
         required: true
@@ -72,11 +76,11 @@ jobs:
 
       # Terraform Init
       - name: Terraform Init
-        run: terraform init -upgrade -reconfigure -backend-config=$device/$device.hcl
+        run: terraform init -upgrade -reconfigure -backend-config=${{ inputs.device }}/${{ inputs.device }}.hcl
 
       # Terraform Apply
       - name: Terraform Apply
-        run: terraform apply -var-file=$device/$device.tfvars -auto-approve
+        run: terraform apply -var-file=${{ inputs.device }}/${{ inputs.device }}.tfvars -auto-approve
 
       - name: ntfy-success-notifications
         uses: NiNiyas/ntfy-action@v1.0.4
