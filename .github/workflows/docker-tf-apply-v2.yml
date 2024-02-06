@@ -49,16 +49,16 @@ jobs:
           sudo ip route add ${{ vars.SHARED_WG_SERVER_IPSPACE }} dev wg0
           sudo ip route add ${{ vars.SHARED_WG_SERVER_IPSPACE2 }} dev wg0
 
-      # Deploy
-      - name: Deploy Docker Config Files with rsync
-        uses: Burnett01/rsync-deployments@6.0.0
-        with:
-          switches: -avzr --quiet --delete
-          path: ${{ inputs.ENVIRONMENT }}/docker-config-files/
-          remote_path: ${{ vars.DOCKER_CONFIG_PATH }}
-          remote_host: ${{ vars.SSH_HOST }}
-          remote_user: ${{ vars.SSH_USER }}
-          remote_key: ${{ secrets.SSH_KEY }}
+      # # Deploy
+      # - name: Deploy Docker Config Files with rsync
+      #   uses: Burnett01/rsync-deployments@6.0.0
+      #   with:
+      #     switches: -avzr --quiet --delete
+      #     path: ${{ inputs.ENVIRONMENT }}/docker-config-files/
+      #     remote_path: ${{ vars.DOCKER_CONFIG_PATH }}
+      #     remote_host: ${{ vars.SSH_HOST }}
+      #     remote_user: ${{ vars.SSH_USER }}
+      #     remote_key: ${{ secrets.SSH_KEY }}
 
       # Write Private SSH Key
       - name: Write Key Files
