@@ -60,7 +60,7 @@ jobs:
       # Write Private SSH Key
       - name: rsync
         run: |
-          rsync $GITHUB_WORKSPACE/${{ inputs.ENVIRONMENT }}/docker-config-files/ ubuntu@10.250.1.22:/home/ubuntu/test2
+          rsync -avzr --delete ${{ github.workspace }}/${{ inputs.ENVIRONMENT }}/docker-config-files/ ubuntu@10.250.1.22:/home/ubuntu/test2
 
       # # Deploy
       # - name: Deploy Docker Config Files with rsync
