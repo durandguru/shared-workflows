@@ -36,7 +36,6 @@ jobs:
           sudo wg set wg0 listen-port 48123 private-key privatekey peer ${{ vars.SHARED_WG_SERVER_PUBLICKEY }} allowed-ips '${{ vars.SHARED_WG_SERVER_IPSPACE }}, ${{ vars.SHARED_WG_SERVER_IPSPACE2 }}' endpoint ${{ vars.SHARED_WG_SERVER_ENDPOINT }}
           sudo ip link set up dev wg0
           sudo ip route add ${{ vars.SHARED_WG_SERVER_IPSPACE }} dev wg0
-          sudo ip route add ${{ vars.SHARED_WG_SERVER_IPSPACE2 }} dev wg0
 
       # Write Private SSH Key
       - name: Write Key Files
