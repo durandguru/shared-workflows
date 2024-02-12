@@ -48,4 +48,4 @@ jobs:
       # Rsync Config Files to Host
       - name: rsync config files to host
         run: |
-          rsync -avzr --delete ${{ github.workspace }}/${{ inputs.ENVIRONMENT }}/docker-config-files/ ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:${{ vars.GIT_FOLDER }}
+          rsync -avzr --delete ${{ github.workspace }}/public/ ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:${{ vars.GIT_FOLDER }}
