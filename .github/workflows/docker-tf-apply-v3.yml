@@ -58,10 +58,10 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
 
       # Write Private SSH Key
-      - name: Write Key Files
+      - name: rsync
         run: |
-          rsync ${{ inputs.ENVIRONMENT }}/docker-config-files/ ubuntu@10.250.1.22:/home/ubuntu/test2
-          
+          rsync $GITHUB_WORKSPACE/${{ inputs.ENVIRONMENT }}/docker-config-files/ ubuntu@10.250.1.22:/home/ubuntu/test2
+
       # # Deploy
       # - name: Deploy Docker Config Files with rsync
       #   uses: Burnett01/rsync-deployments@6.0.0
