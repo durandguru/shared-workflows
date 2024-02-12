@@ -57,10 +57,10 @@ jobs:
           echo "${{ secrets.SSH_KEY }}" >> ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-      # Write Private SSH Key
-      - name: rsync
+      # Rsync Config Files to Host
+      - name: rsync config files to host
         run: |
-          rsync -avzr --delete ${{ github.workspace }}/${{ inputs.ENVIRONMENT }}/docker-config-files/ ubuntu@10.250.1.22:/home/ubuntu/test2
+          rsync -avzr --delete ${{ github.workspace }}/${{ inputs.ENVIRONMENT }}/docker-config-files/ ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:${{ vars.DOCKER_CONFIG_PATH }}
 
       # # Deploy
       # - name: Deploy Docker Config Files with rsync
