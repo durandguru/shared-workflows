@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   nginx-rsync:
-    name: "Terraform Apply"
+    name: "Nginx Rsync"
     runs-on: ubuntu-latest
     steps:
       # Checkout the repository to the GitHub Actions runner
