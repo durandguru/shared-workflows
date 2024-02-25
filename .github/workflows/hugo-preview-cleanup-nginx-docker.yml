@@ -35,7 +35,7 @@ jobs:
           sudo ip route add ${{ vars.SHARED_WG_SERVER_IPSPACE }} dev wg0
 
       - name: Setup SSH
-        uses: kielabokkie/ssh-key-and-known-hosts-action@v1.3.5
+        uses: kielabokkie/ssh-key-and-known-hosts-action@v1.4.1
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
           ssh-host: ${{ vars.SSH_HOST }}
