@@ -7,6 +7,5 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      day: "sunday"
-      interval: "weekly"
+      interval: "daily"
       time: "03:33"
