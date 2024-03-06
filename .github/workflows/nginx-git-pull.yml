@@ -21,7 +21,7 @@ jobs:
     steps:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
 
       # Wireguard - Install
       - name: Wireguard - Install
@@ -47,7 +47,7 @@ jobs:
 
       # Git Pull on Host
       - name: Update Docker Config files on host
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ vars.SSH_HOST }}
           username: ${{ vars.SSH_USER }}
