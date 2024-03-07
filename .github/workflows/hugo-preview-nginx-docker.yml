@@ -62,7 +62,7 @@ jobs:
     
       # Deploy build website with rsync to host
       - name: Deploy website with rsync
-        uses: Burnett01/rsync-deployments@6.0.0
+        uses: Burnett01/rsync-deployments@7.0.0
         with:
           switches: -avzr --quiet --delete
           path: public/
