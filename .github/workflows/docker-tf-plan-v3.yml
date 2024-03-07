@@ -1,4 +1,4 @@
-name: Terraform Plan v3
+name: docker-tf-plan-v3
 
 on:
   workflow_call:
