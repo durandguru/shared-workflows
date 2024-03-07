@@ -1,0 +1,78 @@
+name: Terraform Plan v3
+
+on:
+  workflow_call:
+    inputs:
+      ENVIRONMENT:
+        required: true
+        type: string
+    secrets:
+      WG_CLIENT_PRIVATEKEY: 
+        required: true
+      SSH_KEY: 
+        required: true
+
+#Special permissions required for OIDC authentication
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+#These environment variables are used by the terraform azure provider to setup OIDD authenticate. 
+env:
+  ARM_CLIENT_ID: "${{ vars.SHARED_AZURE_CLIENT_ID }}"
+  ARM_SUBSCRIPTION_ID: "${{ vars.SHARED_AZURE_SUBSCRIPTION_ID }}"
+  ARM_TENANT_ID: "${{ vars.SHARED_AZURE_TENANT_ID }}"
+          
+jobs:
+  tfplan:
+    name: "Terraform Plan"
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.ENVIRONMENT }}
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v4.1.1
+
+      # Wireguard - Install
+      - name: Wireguard - Install
+        run: sudo apt install wireguard wireguard-tools
+
+      # Wireguard - Setup
+      - name: Wireguard - Setup
+        run: | 
+          echo "${{ secrets.WG_CLIENT_PRIVATEKEY }}" > privatekey
+          sudo ip link add dev wg0 type wireguard
+          sudo ip address add dev wg0 ${{ vars.WG_CLIENT_IP }}
+          sudo wg set wg0 listen-port 48123 private-key privatekey peer ${{ vars.SHARED_WG_SERVER_PUBLICKEY }} allowed-ips '${{ vars.SHARED_WG_SERVER_IPSPACE }}, ${{ vars.SHARED_WG_SERVER_IPSPACE2 }}' endpoint ${{ vars.SHARED_WG_SERVER_ENDPOINT }}
+          sudo ip link set up dev wg0
+          sudo ip route add ${{ vars.SHARED_WG_SERVER_IPSPACE }} dev wg0
+          sudo ip route add ${{ vars.SHARED_WG_SERVER_IPSPACE2 }} dev wg0
+
+      # Write Private SSH Key
+      - name: Write Key Files
+        run: |
+          mkdir -p ~/.ssh/ && touch ~/.ssh/known_hosts
+          ssh-keyscan ${{ vars.SSH_HOST }} >> ~/.ssh/known_hosts
+          echo "${{ secrets.SSH_KEY }}" >> ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      # Terraform Setup
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3.0.0
+
+      # Login to Azure CLI
+      - name: 'Az CLI login'
+        uses: Azure/login@v2
+        with:
+            client-id: ${{ vars.SHARED_AZURE_CLIENT_ID }}
+            tenant-id: ${{ vars.SHARED_AZURE_TENANT_ID }}
+            subscription-id: ${{ vars.SHARED_AZURE_SUBSCRIPTION_ID }}
+
+      # Terraform Init
+      - name: Terraform Init
+        run: terraform -chdir=./${{ inputs.ENVIRONMENT }} init
+
+      # Terraform Plan
+      - name: Terraform Plan
+        run: terraform -chdir=./${{ inputs.ENVIRONMENT }} plan -var-file='../variables.tfvars'
