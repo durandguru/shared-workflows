@@ -35,8 +35,11 @@ jobs:
         uses: actions/checkout@v4.1.1
 
       # Terraform Setup
+      # terraform_wrapper needs to be false due that detailed-exitcode always will be zero with true
       - name: Terraform Setup
         uses: hashicorp/setup-terraform@v3.0.0
+        with:
+          terraform_wrapper: false
 
       # Login to Azure CLI
       - name: 'Az CLI login'
@@ -81,7 +84,43 @@ jobs:
 
       # Terraform Plan
       - name: Terraform Plan
-        run: terraform plan
+        id: tf-plan
+        run: |
+          export exitcode=0
+          terraform plan -detailed-exitcode -no-color -out tfplan || export exitcode=$?
+          
+          echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
+          
+          if [ $exitcode -eq 1 ]; then
+            echo Terraform Plan Failed!
+            exit 1
+          else 
+            exit 0
+          fi
+
+      # Create string output of Terraform Plan
+      - name: Create String Output
+        id: tf-plan-string
+        run: |
+          TERRAFORM_PLAN=$(terraform show -no-color tfplan)
+        
+          delimiter="$(openssl rand -hex 8)"
+          echo "summary<<${delimiter}" >> $GITHUB_OUTPUT
+          echo "## Terraform Plan Output" >> $GITHUB_OUTPUT
+          echo "<details><summary>Click to expand</summary>" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo '```terraform' >> $GITHUB_OUTPUT
+          echo "$TERRAFORM_PLAN" >> $GITHUB_OUTPUT
+          echo '```' >> $GITHUB_OUTPUT
+          echo "</details>" >> $GITHUB_OUTPUT
+          echo "${delimiter}" >> $GITHUB_OUTPUT
+
+      # Publish Terraform Plan as task summary
+      - name: Publish Terraform Plan to Task Summary
+        env:
+          SUMMARY: ${{ steps.tf-plan-string.outputs.summary }}
+        run: |
+          echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
 
       # NTFY Message (https://ntfy.durand.guru/docs/examples/?h=git#github-actions) (https://docs.github.com/en/actions/learn-github-actions/contexts)
       - name: NTFY
