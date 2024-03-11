@@ -2,6 +2,11 @@ name: tf-plan
 
 on:
   workflow_call:
+    secrets:
+      TF_VAR_github_owner: 
+        required: true
+      TF_VAR_github_token: 
+        required: true
 
 #Special permissions required for OIDC authentication
 permissions:
@@ -14,6 +19,8 @@ env:
   ARM_CLIENT_ID: "${{ vars.SHARED_AZURE_CLIENT_ID }}"
   ARM_SUBSCRIPTION_ID: "${{ vars.SHARED_AZURE_SUBSCRIPTION_ID }}"
   ARM_TENANT_ID: "${{ vars.SHARED_AZURE_TENANT_ID }}"
+  TF_VAR_github_owner : ${{ secrets.TF_VAR_github_owner }}
+  TF_VAR_github_token : ${{ secrets.TF_VAR_github_token }}
           
 jobs:
   tf-plan:
