@@ -35,7 +35,7 @@ jobs:
         uses: actions/checkout@v4.1.1
 
       # Terraform Setup
-      - name: Setup Terraform
+      - name: Terraform Setup
         uses: hashicorp/setup-terraform@v3.0.0
 
       # Login to Azure CLI
@@ -87,7 +87,7 @@ jobs:
       - name: NTFY
         run: |
           curl \
-          -H "Title: ${{ github.action }} has status ${{ job.status}}" \
+          -H "Title: ${{ github.workflow }} has status ${{ job.status}}" \
           -H "Content-Type: text/plain" \
           -d $'Repo: ${{ github.repository }}\nCommit: ${{ github.event.head_commit.message }}\nBy: ${{ github.actor }}\nStatus: ${{ job.status}}' \
           ${{ vars.NTFY_URL }}
