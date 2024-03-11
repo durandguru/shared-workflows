@@ -72,7 +72,9 @@ jobs:
 
       # Display $GITHUB_OUTPUT
       - name: DisplayVar
-        run: echo $GITHUB_OUTPUT
+        run: |
+          echo ${{ steps.tf-plan.outputs.exitcode }}
+          echo "$GITHUB_OUTPUT"
 
       # Save plan to artifacts  
       - name: Publish Terraform Plan
