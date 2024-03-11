@@ -17,7 +17,7 @@ env:
           
 jobs:
   tf-plan:
-    name: "Terraform Apply"
+    name: "Terraform Plan"
     runs-on: ubuntu-latest
     env:
         #this is needed since we are running terraform with read-only permissions
