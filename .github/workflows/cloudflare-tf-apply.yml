@@ -3,7 +3,7 @@ name: cloudflare-tf-apply
 on:
   workflow_call:
     secrets:
-      TF_VAR_cloudflare_owner: 
+      TF_VAR_cloudflare_api_token: 
         required: true
 
 #Special permissions required for OIDC authentication

@@ -3,7 +3,7 @@ name: cloudflare-tf-plan
 on:
   workflow_call:
     secrets:
-      TF_VAR_github_owner: 
+      TF_VAR_cloudflare_api_token: 
         required: true
 
 #Special permissions required for OIDC authentication
