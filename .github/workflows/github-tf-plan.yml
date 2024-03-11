@@ -1,4 +1,4 @@
-name: tf-plan
+name: github-tf-plan
 
 on:
   workflow_call:
@@ -23,7 +23,7 @@ env:
   TF_VAR_github_token : ${{ secrets.TF_VAR_github_token }}
           
 jobs:
-  tf-plan:
+  plan:
     name: "Terraform Plan"
     runs-on: ubuntu-latest
     env:
