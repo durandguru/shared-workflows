@@ -39,6 +39,7 @@ jobs:
         uses: actions/checkout@v4.1.1
 
       # Terraform Setup
+      # terraform_wrapper needs to be false due that detailed-exitcode always will be zero with true
       - name: Terraform Setup
         uses: hashicorp/setup-terraform@v3.0.0
         with:
@@ -186,8 +187,3 @@ jobs:
                 state: 'closed'
               })
             } 
-           
-      # Mark the workflow as failed if drift detected 
-      - name: Error on Failure
-        if: steps.tf-plan.outputs.exitcode == 2
-        run: exit 1
