@@ -53,3 +53,12 @@ jobs:
       # Terraform Apply
       - name: Terraform Apply
         run: terraform apply -auto-approve
+
+      # NTFY Message
+      - name: NTFY
+        run: |
+          curl \
+          -H "Title: Title here" \
+          -H "Content-Type: text/plain" \
+          -d $'Repo: ${{ github.repository }}\nCommit: ${{ github.sha }}\nRef: ${{ github.ref }}\nStatus: ${{ job.status}}' \
+          ${{ vars.NTFY_URL }}

@@ -82,3 +82,12 @@ jobs:
       # Terraform Plan
       - name: Terraform Plan
         run: terraform plan
+
+      # NTFY Message
+      - name: NTFY
+        run: |
+          curl \
+          -H "Title: Title here" \
+          -H "Content-Type: text/plain" \
+          -d $'Repo: ${{ github.repository }}\nCommit: ${{ github.sha }}\nRef: ${{ github.ref }}\nStatus: ${{ job.status}}' \
+          ${{ vars.NTFY_URL }}
