@@ -61,26 +61,12 @@ jobs:
           remote_user: ${{ vars.SSH_USER }}
           remote_key: ${{ secrets.SSH_KEY }}
 
-      - name: ntfy-success-notifications
-        uses: NiNiyas/ntfy-action@v1.0.4
-        if: success()
-        with:
-          url: ${{ vars.NTFY_SERVER }}
-          topic: ${{ vars.NTFY_TOPIC }}
-          details: Workflow has been successfully completed!
-      
-      - name: ntfy-failed-notifications
-        uses: NiNiyas/ntfy-action@v1.0.4
-        if: failure()
-        with:
-          url: ${{ vars.NTFY_SERVER }}
-          topic: ${{ vars.NTFY_TOPIC }}
-          details: Workflow has failed!
-
-      - name: ntfy-cancelled-notifications
-        uses: NiNiyas/ntfy-action@v1.0.4
-        if: cancelled()
-        with:
-          url: ${{ vars.NTFY_SERVER }}
-          topic: ${{ vars.NTFY_TOPIC }}
-          details: Workflow has been cancelled!
+      # NTFY Message (https://ntfy.durand.guru/docs/examples/?h=git#github-actions) (https://docs.github.com/en/actions/learn-github-actions/contexts)
+      - name: NTFY
+        if: always()
+        run: |
+          curl \
+          -H "Title: ${{ github.workflow }} has status ${{ job.status}}" \
+          -H "Content-Type: text/plain" \
+          -d $'Repo: ${{ github.repository }}\nCommit: ${{ github.event.head_commit.message }}\nBy: ${{ github.actor }}\nStatus: ${{ job.status}}' \
+          ${{ vars.NTFY_URL }}
