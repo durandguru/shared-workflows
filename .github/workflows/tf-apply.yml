@@ -24,6 +24,10 @@ env:
   TF_VAR_cloudflare_api_token : ${{ secrets.TF_VAR_cloudflare_api_token }}
   TF_VAR_github_owner : ${{ secrets.TF_VAR_github_owner }}
   TF_VAR_github_token : ${{ secrets.TF_VAR_github_token }}
+  TF_VAR_ovh_app_key : ${{ secrets.TF_VAR_ovh_app_key }}
+  TF_VAR_ovh_app_secret : ${{ secrets.TF_VAR_ovh_app_secret }}
+  TF_VAR_ovh_consumer_key : ${{ secrets.TF_VAR_ovh_consumer_key }}
+
         
 jobs:
   apply:
