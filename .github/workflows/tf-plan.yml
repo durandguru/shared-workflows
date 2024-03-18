@@ -1,9 +1,13 @@
-name: github-tf-plan
+name: tf-plan
 
 on:
   workflow_call:
     secrets:
       TF_VAR_cloudflare_api_token: 
+        required: false
+      TF_VAR_github_owner: 
+        required: false
+      TF_VAR_github_token: 
         required: false
 
 #Special permissions required for OIDC authentication
@@ -18,6 +22,8 @@ env:
   ARM_SUBSCRIPTION_ID: "${{ vars.SHARED_AZURE_SUBSCRIPTION_ID }}"
   ARM_TENANT_ID: "${{ vars.SHARED_AZURE_TENANT_ID }}"
   TF_VAR_cloudflare_api_token : ${{ secrets.TF_VAR_cloudflare_api_token }}
+  TF_VAR_github_owner : ${{ secrets.TF_VAR_github_owner }}
+  TF_VAR_github_token : ${{ secrets.TF_VAR_github_token }}
           
 jobs:
   plan:
