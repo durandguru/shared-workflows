@@ -6,6 +6,12 @@ on:
       server:
         required: true
         type: string
+      ssh_user:
+        required: true
+        type: string
+      ssh_host:
+          required: true
+          type: string
     secrets:
       SHARED_WG_CLIENT_PRIVATEKEY: 
         required: true
@@ -54,14 +60,14 @@ jobs:
       - name: Write Key Files
         run: |
           mkdir -p ~/.ssh/ && touch ~/.ssh/known_hosts
-          ssh-keyscan ${{ inputs.server }}.durand.li >> ~/.ssh/known_hosts
+          ssh-keyscan ${{ inputs.ssh_host }} >> ~/.ssh/known_hosts
           echo "${{ secrets.SSH_KEY }}" >> ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
       # Rsync Config Files to Host
       - name: rsync config files to host
         run: |
-          rsync -avzr --delete ${{ github.workspace }}/${{ inputs.server }}/docker-config-files/ ${{ vars.SSH_USER }}@${{ inputs.server }}.durand.li:${{ vars.DOCKER_CONFIG_PATH }}
+          rsync -avzr --delete ${{ github.workspace }}/${{ inputs.server }}/docker-config-files/ ${{ inputs.ssh_user }}@${{ inputs.ssh_host }}:${{ vars.DOCKER_CONFIG_PATH }}
 
       # Terraform Setup
       - name: Setup Terraform
