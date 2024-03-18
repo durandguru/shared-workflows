@@ -1,0 +1,57 @@
+name: docker-tf-plan-v3
+
+on:
+  workflow_call:
+    inputs:
+      server:
+        required: true
+        type: string
+      ssh_user:
+        required: true
+        type: string
+      ssh_host:
+        required: true
+        type: string
+      docker_config_path: 
+        required: true
+        type: string
+    secrets:
+      SHARED_WG_CLIENT_PRIVATEKEY: 
+        required: true
+      SSH_KEY: 
+        required: true
+
+#Special permissions required for OIDC authentication
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+#These environment variables are used by the terraform azure provider to setup OIDD authenticate. 
+env:
+  ARM_CLIENT_ID: "${{ vars.SHARED_AZURE_CLIENT_ID }}"
+  ARM_SUBSCRIPTION_ID: "${{ vars.SHARED_AZURE_SUBSCRIPTION_ID }}"
+  ARM_TENANT_ID: "${{ vars.SHARED_AZURE_TENANT_ID }}"
+  SHARED_WG_CLIENT_PRIVATEKEY: ${{ secrets.SHARED_WG_CLIENT_PRIVATEKEY }}
+  SSH_KEY: ${{ secrets.SSH_KEY }}
+          
+jobs:
+  tfplan:
+    name: "Terraform Plan"
+    runs-on: ubuntu-latest
+    steps:
+      # Write Private SSH Key
+      - name: Write Key Files
+        run: |
+          mkdir -p ~/.ssh/ && touch ~/.ssh/known_hosts
+          ssh-keyscan ${{ inputs.ssh_host }} >> ~/.ssh/known_hosts
+          echo "${{ secrets.SSH_KEY }}" >> ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      # Terraform Init
+      - name: Terraform Init
+        run: terraform -chdir=./${{ inputs.server }} init
+
+      # Terraform Plan
+      - name: Terraform Plan
+        run: terraform -chdir=./${{ inputs.server }} plan -var-file='../variables.tfvars'
