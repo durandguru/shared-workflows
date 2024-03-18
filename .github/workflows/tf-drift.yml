@@ -9,6 +9,12 @@ on:
         required: false
       TF_VAR_github_token: 
         required: false
+      TF_VAR_ovh_app_key: 
+        required: false
+      TF_VAR_ovh_app_secret: 
+        required: false
+      TF_VAR_ovh_consumer_key: 
+        required: false
 
 #Special permissions required for OIDC authentication
 permissions:
