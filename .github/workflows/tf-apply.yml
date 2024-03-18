@@ -66,6 +66,7 @@ jobs:
 
       # NTFY Message (https://ntfy.durand.guru/docs/examples/?h=git#github-actions) (https://docs.github.com/en/actions/learn-github-actions/contexts)
       - name: NTFY
+        if: always()
         run: |
           curl \
           -H "Title: ${{ github.workflow }} has status ${{ job.status}}" \
