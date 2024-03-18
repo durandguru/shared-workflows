@@ -61,7 +61,7 @@ jobs:
       # Rsync Config Files to Host
       - name: rsync config files to host
         run: |
-          rsync -avzr --delete ${{ github.workspace }}/${{ inputs.server }}/docker-config-files/ ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:${{ vars.DOCKER_CONFIG_PATH }}
+          rsync -avzr --delete ${{ github.workspace }}/${{ inputs.server }}/docker-config-files/ ${{ vars.SSH_USER }}@${{ inputs.server }}.durand.li:${{ vars.DOCKER_CONFIG_PATH }}
 
       # Terraform Setup
       - name: Setup Terraform
