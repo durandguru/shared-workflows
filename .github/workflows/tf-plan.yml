@@ -2,6 +2,9 @@ name: github-tf-plan
 
 on:
   workflow_call:
+    secrets:
+      TF_VAR_cloudflare_api_token: 
+        required: false
 
 #Special permissions required for OIDC authentication
 permissions:
