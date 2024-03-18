@@ -10,8 +10,11 @@ on:
         required: true
         type: string
       ssh_host:
-          required: true
-          type: string
+        required: true
+        type: string
+      docker_config_path: 
+        required: true
+        type: string
     secrets:
       SHARED_WG_CLIENT_PRIVATEKEY: 
         required: true
@@ -67,7 +70,7 @@ jobs:
       # Rsync Config Files to Host
       - name: rsync config files to host
         run: |
-          rsync -avzr --delete ${{ github.workspace }}/${{ inputs.server }}/docker-config-files/ ${{ inputs.ssh_user }}@${{ inputs.ssh_host }}:${{ vars.DOCKER_CONFIG_PATH }}
+          rsync -avzr --delete ${{ github.workspace }}/${{ inputs.server }}/docker-config-files/ ${{ inputs.ssh_user }}@${{ inputs.ssh_host }}:${{ inputs.docker_config_path }}
 
       # Terraform Setup
       - name: Setup Terraform
