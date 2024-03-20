@@ -50,16 +50,18 @@ jobs:
           sudo ip link set up dev wg0
           sudo ip route add ${{ vars.SHARED_WG_SERVER_IPSPACE }} dev wg0
     
-      # Deploy build website with rsync to host
-      - name: Deploy website with rsync
-        uses: Burnett01/rsync-deployments@6.0.0
-        with:
-          switches: -avzr --quiet --delete
-          path: public/
-          remote_path: ${{ vars.SSH_PATH }}
-          remote_host: ${{ vars.SSH_HOST }}
-          remote_user: ${{ vars.SSH_USER }}
-          remote_key: ${{ secrets.SSH_KEY }}
+      # Write Private SSH Key
+      - name: Write Key Files
+        run: |
+          mkdir -p ~/.ssh/ && touch ~/.ssh/known_hosts
+          ssh-keyscan ${{ vars.SSH_HOST }} >> ~/.ssh/known_hosts
+          echo "${{ secrets.SSH_KEY }}" >> ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      # Rsync Config Files to Host
+      - name: rsync config files to host
+        run: |
+          rsync -avzr --delete ${{ github.workspace }}/public/ ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:${{ vars.SSH_FOLDER }}
 
       # NTFY Message (https://ntfy.durand.guru/docs/examples/?h=git#github-actions) (https://docs.github.com/en/actions/learn-github-actions/contexts)
       - name: NTFY
