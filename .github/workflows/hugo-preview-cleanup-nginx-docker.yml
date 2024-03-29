@@ -46,7 +46,7 @@ jobs:
           ssh -p 22 ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }} rm -r "${{ vars.SSH_PREVIEW_PATH }}/${{ github.event.number }}/"
       
       - name: Deactivate deployment
-        uses: bobheadxi/deployments@v1.4.0
+        uses: bobheadxi/deployments@v1.5.0
         with:
           step: deactivate-env
           token: ${{ github.token }}

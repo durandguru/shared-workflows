@@ -27,7 +27,7 @@ jobs:
           submodules: true
 
       - name: Start deployment
-        uses: bobheadxi/deployments@v1.4.0
+        uses: bobheadxi/deployments@v1.5.0
         id: deployment
         with:
           step: start
@@ -74,7 +74,7 @@ jobs:
           rsync -avzr --delete ${{ github.workspace }}/public/ ${{ vars.SSH_USER }}@${{ vars.SSH_HOST }}:${{ vars.SSH_PREVIEW_PATH }}/${{ github.event.number }}
 
       - name: Finish deployment
-        uses: bobheadxi/deployments@v1.4.0
+        uses: bobheadxi/deployments@v1.5.0
         if: always()
         with:
           step: finish
