@@ -1,0 +1,136 @@
+name: tf-plan
+
+on:
+  workflow_call:
+    secrets:
+      OCI_KEY_FILE: 
+        required: false
+
+#Special permissions required for OIDC authentication
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+#These environment variables are used by the terraform azure provider to setup OIDD authenticate. 
+env:
+  ARM_CLIENT_ID: "${{ vars.SHARED_AZURE_CLIENT_ID }}"
+  ARM_SUBSCRIPTION_ID: "${{ vars.SHARED_AZURE_SUBSCRIPTION_ID }}"
+  ARM_TENANT_ID: "${{ vars.SHARED_AZURE_TENANT_ID }}"
+  OCI_KEY_FILE : ${{ secrets.OCI_KEY_FILE }}
+          
+jobs:
+  plan:
+    name: "Terraform Plan"
+    runs-on: ubuntu-latest
+    env:
+        #this is needed since we are running terraform with read-only permissions
+        ARM_SKIP_PROVIDER_REGISTRATION: true
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v4.1.1
+
+      # Write OCI Key
+      - name: 'Write Config & Key Files'
+        run: |
+          mkdir ~/.oci
+          echo "${{secrets.OCI_KEY_FILE}}" >> ~/.oci/key.pem
+
+      # Terraform Setup
+      # terraform_wrapper needs to be false due that detailed-exitcode always will be zero with true
+      - name: Terraform Setup
+        uses: hashicorp/setup-terraform@v3.0.0
+        with:
+          terraform_wrapper: false
+
+      # Login to Azure CLI
+      - name: 'Az CLI login'
+        uses: Azure/login@v2
+        with:
+            client-id: ${{ vars.SHARED_AZURE_CLIENT_ID }}
+            tenant-id: ${{ vars.SHARED_AZURE_TENANT_ID }}
+            subscription-id: ${{ vars.SHARED_AZURE_SUBSCRIPTION_ID }}
+
+      # TF Lint Setup
+      - name: TFLint Setup
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_wrapper: true
+
+      # Terraform Init
+      - name: Terraform Init
+        run: terraform init
+
+      # Terraform FMT
+      - name: Terraform Format
+        run: terraform fmt -check
+     
+      # Terraform Validate
+      - name: Terraform Validate
+        run: terraform validate -no-color
+
+      # TFLint Init  
+      - name: TFLint Init
+        run: tflint --init
+        
+      # TFLint Run
+      - name: TFLint Run
+        run: tflint -f compact
+        continue-on-error: false
+
+      # TFSec Run  
+      - name: TFSec Run
+        uses: aquasecurity/tfsec-action@v1.0.3
+        with:
+          soft_fail: true 
+
+      # Terraform Plan
+      - name: Terraform Plan
+        id: tf-plan
+        run: |
+          export exitcode=0
+          terraform plan -detailed-exitcode -no-color -out tfplan || export exitcode=$?
+          
+          echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
+          
+          if [ $exitcode -eq 1 ]; then
+            echo Terraform Plan Failed!
+            exit 1
+          else 
+            exit 0
+          fi
+
+      # Create string output of Terraform Plan
+      - name: Create String Output
+        id: tf-plan-string
+        run: |
+          TERRAFORM_PLAN=$(terraform show -no-color tfplan)
+        
+          delimiter="$(openssl rand -hex 8)"
+          echo "summary<<${delimiter}" >> $GITHUB_OUTPUT
+          echo "## Terraform Plan Output" >> $GITHUB_OUTPUT
+          echo "<details><summary>Click to expand</summary>" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo '```terraform' >> $GITHUB_OUTPUT
+          echo "$TERRAFORM_PLAN" >> $GITHUB_OUTPUT
+          echo '```' >> $GITHUB_OUTPUT
+          echo "</details>" >> $GITHUB_OUTPUT
+          echo "${delimiter}" >> $GITHUB_OUTPUT
+
+      # Publish Terraform Plan as task summary
+      - name: Publish Terraform Plan to Task Summary
+        env:
+          SUMMARY: ${{ steps.tf-plan-string.outputs.summary }}
+        run: |
+          echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
+
+      # NTFY Message (https://ntfy.durand.guru/docs/examples/?h=git#github-actions) (https://docs.github.com/en/actions/learn-github-actions/contexts)
+      - name: NTFY
+        if: always()
+        run: |
+          curl \
+          -H "Title: ${{ github.workflow }} has status ${{ job.status}}" \
+          -H "Content-Type: text/plain" \
+          -d $'Repo: ${{ github.repository }}\nCommit: ${{ github.event.head_commit.message }}\nBy: ${{ github.actor }}\nStatus: ${{ job.status}}' \
+          ${{ vars.NTFY_URL }}
