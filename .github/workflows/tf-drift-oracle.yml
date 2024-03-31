@@ -3,17 +3,7 @@ name: tf-drift
 on:
   workflow_call:
     secrets:
-      TF_VAR_cloudflare_api_token: 
-        required: false
-      TF_VAR_github_owner: 
-        required: false
-      TF_VAR_github_token: 
-        required: false
-      TF_VAR_ovh_app_key: 
-        required: false
-      TF_VAR_ovh_app_secret: 
-        required: false
-      TF_VAR_ovh_consumer_key: 
+      OCI_KEY_FILE: 
         required: false
 
 #Special permissions required for OIDC authentication
@@ -28,13 +18,8 @@ env:
   ARM_CLIENT_ID: "${{ vars.SHARED_AZURE_CLIENT_ID }}"
   ARM_SUBSCRIPTION_ID: "${{ vars.SHARED_AZURE_SUBSCRIPTION_ID }}"
   ARM_TENANT_ID: "${{ vars.SHARED_AZURE_TENANT_ID }}"
-  TF_VAR_cloudflare_api_token : ${{ secrets.TF_VAR_cloudflare_api_token }}
-  TF_VAR_github_owner : ${{ secrets.TF_VAR_github_owner }}
-  TF_VAR_github_token : ${{ secrets.TF_VAR_github_token }}
-  TF_VAR_ovh_app_key : ${{ secrets.TF_VAR_ovh_app_key }}
-  TF_VAR_ovh_app_secret : ${{ secrets.TF_VAR_ovh_app_secret }}
-  TF_VAR_ovh_consumer_key : ${{ secrets.TF_VAR_ovh_consumer_key }}
- 
+  OCI_KEY_FILE : ${{ secrets.OCI_KEY_FILE }}
+          
 jobs:
   drift:
     name: "Terraform Configuration Drift Detection"
@@ -49,6 +34,12 @@ jobs:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v4.1.1
+
+      # Write OCI Key
+      - name: 'Write Config & Key Files'
+        run: |
+          mkdir ~/.oci
+          echo "${{secrets.OCI_KEY_FILE}}" >> ~/.oci/key.pem
 
       # Terraform Setup
       # terraform_wrapper needs to be false due that detailed-exitcode always will be zero with true

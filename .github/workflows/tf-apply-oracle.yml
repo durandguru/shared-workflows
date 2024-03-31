@@ -1,0 +1,65 @@
+name: tf-apply
+
+on:
+  workflow_call:
+    secrets:
+      OCI_KEY_FILE: 
+        required: false
+
+#Special permissions required for OIDC authentication
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+
+#These environment variables are used by the terraform azure provider to setup OIDD authenticate. 
+env:
+  ARM_CLIENT_ID: "${{ vars.SHARED_AZURE_CLIENT_ID }}"
+  ARM_SUBSCRIPTION_ID: "${{ vars.SHARED_AZURE_SUBSCRIPTION_ID }}"
+  ARM_TENANT_ID: "${{ vars.SHARED_AZURE_TENANT_ID }}"
+  OCI_KEY_FILE : ${{ secrets.OCI_KEY_FILE }}
+        
+jobs:
+  apply:
+    name: "Terraform Apply"
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v4.1.1
+
+      # Write OCI Key
+      - name: 'Write Config & Key Files'
+        run: |
+          mkdir ~/.oci
+          echo "${{secrets.OCI_KEY_FILE}}" >> ~/.oci/key.pem
+
+      # Terraform Setup
+      - name: Terraform Setup
+        uses: hashicorp/setup-terraform@v3.0.0
+
+      # Login to Azure CLI
+      - name: 'Az CLI login'
+        uses: Azure/login@v2
+        with:
+            client-id: ${{ vars.SHARED_AZURE_CLIENT_ID }}
+            tenant-id: ${{ vars.SHARED_AZURE_TENANT_ID }}
+            subscription-id: ${{ vars.SHARED_AZURE_SUBSCRIPTION_ID }}
+
+      # Terraform Init
+      - name: Terraform Init
+        run: terraform init
+
+      # Terraform Apply
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+
+      # NTFY Message (https://ntfy.durand.guru/docs/examples/?h=git#github-actions) (https://docs.github.com/en/actions/learn-github-actions/contexts)
+      - name: NTFY
+        if: always()
+        run: |
+          curl \
+          -H "Title: ${{ github.workflow }} has status ${{ job.status}}" \
+          -H "Content-Type: text/plain" \
+          -d $'Repo: ${{ github.repository }}\nCommit: ${{ github.event.head_commit.message }}\nBy: ${{ github.actor }}\nStatus: ${{ job.status}}' \
+          ${{ vars.NTFY_URL }}
