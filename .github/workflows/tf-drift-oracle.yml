@@ -24,6 +24,7 @@ jobs:
   drift:
     name: "Terraform Configuration Drift Detection"
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
         #this is needed since we are running terraform with read-only permissions
         ARM_SKIP_PROVIDER_REGISTRATION: true
