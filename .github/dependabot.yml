@@ -8,9 +8,9 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-      time: "03:19"
+      time: "04:19"
   - package-ecosystem: "terraform"
     directory: "/"
     schedule:
       interval: "daily"
-      time: "03:19"
+      time: "05:19"
