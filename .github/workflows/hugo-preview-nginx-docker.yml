@@ -85,7 +85,7 @@ jobs:
           auto_inactive: false
 
       - name: Find PR comment
-        uses: peter-evans/find-comment@v3.0.0
+        uses: peter-evans/find-comment@v3.1.0
         id: fc
         with:
           issue-number: ${{ github.event.number }}
