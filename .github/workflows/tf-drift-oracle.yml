@@ -45,7 +45,7 @@ jobs:
       # Terraform Setup
       # terraform_wrapper needs to be false due that detailed-exitcode always will be zero with true
       - name: Terraform Setup
-        uses: hashicorp/setup-terraform@v3.0.0
+        uses: hashicorp/setup-terraform@v3.1.0
         with:
           terraform_wrapper: false
 
