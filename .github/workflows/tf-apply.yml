@@ -46,7 +46,7 @@ jobs:
 
       # Terraform Setup
       - name: Terraform Setup
-        uses: hashicorp/setup-terraform@v3.1.0
+        uses: hashicorp/setup-terraform@v3.1.1
 
       # Login to Azure CLI
       - name: 'Az CLI login'
