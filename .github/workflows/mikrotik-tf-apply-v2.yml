@@ -53,6 +53,7 @@ jobs:
         run: |
           sudo wget -O /usr/local/share/ca-certificates/Durand-Guru-Root-CA.crt "https://durand.nl/Durand-Guru-Root-CA.crt"
           sudo wget -O /usr/local/share/ca-certificates/Atletiekunie-es-CA.crt "https://durand.nl/Atletiekunie-es-CA.crt"
+          sudo wget -O /usr/local/share/ca-certificates/Durand-li-CA.crt "https://durand.nl/Durand-li-CA.crt"
           sudo update-ca-certificates
 
       # Setup Terraform Variables
