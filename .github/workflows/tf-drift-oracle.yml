@@ -34,7 +34,7 @@ jobs:
     steps:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
-        uses: actions/checkout@v4.2.0
+        uses: actions/checkout@v4.2.1
 
       # Write OCI Key
       - name: 'Write Config & Key Files'

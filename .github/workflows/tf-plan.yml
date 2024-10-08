@@ -45,7 +45,7 @@ jobs:
     steps:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
-        uses: actions/checkout@v4.2.0
+        uses: actions/checkout@v4.2.1
 
       # Terraform Setup
       # terraform_wrapper needs to be false due that detailed-exitcode always will be zero with true
