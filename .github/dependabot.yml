@@ -9,8 +9,12 @@ updates:
     schedule:
       interval: "daily"
       time: "02:19"
+    assignees:
+      - "durandguru"
   - package-ecosystem: "terraform"
     directory: "/"
     schedule:
       interval: "daily"
       time: "05:19"
+    assignees:
+      - "durandguru"
