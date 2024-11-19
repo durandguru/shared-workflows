@@ -90,7 +90,7 @@ jobs:
 
       # Terraform Apply
       - name: Terraform Apply
-        run: terraform -chdir=./${{ inputs.server }} apply -var-file='../variables.tfvars' -auto-approve
+        run: terraform -chdir=./${{ inputs.server }} apply -var-file='../variables.tfvars' -auto-approve -parallelism=1
 
       # NTFY Message (https://ntfy.durand.guru/docs/examples/?h=git#github-actions) (https://docs.github.com/en/actions/learn-github-actions/contexts)
       - name: NTFY
