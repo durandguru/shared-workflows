@@ -1,0 +1,70 @@
+name: tf-apply
+
+on:
+  workflow_call:
+    secrets:
+      TF_VAR_cloudflare_api_token: 
+        required: false
+      TF_VAR_github_owner: 
+        required: false
+      TF_VAR_github_token: 
+        required: false
+      TF_VAR_ovh_app_key: 
+        required: false
+      TF_VAR_ovh_app_secret: 
+        required: false
+      TF_VAR_ovh_consumer_key: 
+        required: false
+      AWS_ACCESS_KEY_ID:
+        required: false
+      AWS_SECRET_ACCESS_KEY:
+        required: false
+
+#Special permissions required for OIDC authentication
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+
+#These environment variables are used by the terraform azure provider to setup OIDD authenticate. 
+env:
+  AWS_ACCESS_KEY_ID: "${{ vars.AWS_ACCESS_KEY_ID }}"
+  AWS_SECRET_ACCESS_KEY: "${{ vars.AWS_SECRET_ACCESS_KEY }}"
+  TF_VAR_cloudflare_api_token : ${{ secrets.TF_VAR_cloudflare_api_token }}
+  TF_VAR_github_owner : ${{ secrets.TF_VAR_github_owner }}
+  TF_VAR_github_token : ${{ secrets.TF_VAR_github_token }}
+  TF_VAR_ovh_app_key : ${{ secrets.TF_VAR_ovh_app_key }}
+  TF_VAR_ovh_app_secret : ${{ secrets.TF_VAR_ovh_app_secret }}
+  TF_VAR_ovh_consumer_key : ${{ secrets.TF_VAR_ovh_consumer_key }}
+   
+jobs:
+  apply:
+    name: "Terraform Apply"
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+
+      # Terraform Setup
+      - name: Terraform Setup
+        uses: hashicorp/setup-terraform@v3.1.2
+
+      # Terraform Init
+      - name: Terraform Init
+        run: terraform init
+
+      # Terraform Apply
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+
+      # NTFY Message (https://ntfy.durand.guru/docs/examples/?h=git#github-actions) (https://docs.github.com/en/actions/learn-github-actions/contexts)
+      - name: NTFY
+        if: always()
+        run: |
+          curl \
+          -H "Title: ${{ github.workflow }} has status ${{ job.status}}" \
+          -H "Content-Type: text/plain" \
+          -d $'Repo: ${{ github.repository }}\nCommit: ${{ github.event.head_commit.message }}\nBy: ${{ github.actor }}\nStatus: ${{ job.status}}' \
+          ${{ vars.NTFY_URL }}
