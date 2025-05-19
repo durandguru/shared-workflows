@@ -55,11 +55,8 @@ jobs:
       - name: DNS - Setup
         run: |
           sudo netplan set ethernets.eth0.nameservers.addresses="[10.252.11.11]"
+          sudo netplan set ethernets.eth0.dhcp4-overrides.use-dns="false"
           sudo netplan apply
-          sudo netplan get
-          sudo systemctl disable systemd-resolved
-          sudo systemctl stop systemd-resolved
-          sudo systemctl daemon-reload
 
       # Add Self Signed Root CA
       - name: Add Self Signed Root CA
