@@ -50,7 +50,8 @@ jobs:
           sudo ip link set up dev wg0
           sudo ip route add ${{ vars.SHARED_WG_SERVER_IPSPACE }} dev wg0
           sudo ip route add ${{ vars.SHARED_WG_SERVER_IPSPACE2 }} dev wg0
-          sudo netplan get
+          sudo netplan set ethernets.eth0.nameservers.addresses="[10.252.11.11]"
+          sudo netplan apply
 
       # Add Self Signed Root CA
       - name: Add Self Signed Root CA
