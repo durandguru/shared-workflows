@@ -51,13 +51,6 @@ jobs:
           sudo ip route add ${{ vars.SHARED_WG_SERVER_IPSPACE }} dev wg0
           sudo ip route add ${{ vars.SHARED_WG_SERVER_IPSPACE2 }} dev wg0
 
-      # DNS - Setup
-      - name: DNS - Setup
-        run: |
-          sudo netplan set ethernets.eth0.nameservers.addresses="[10.252.11.11]"
-          sudo netplan set ethernets.eth0.dhcp4-overrides.use-dns="false"
-          sudo netplan apply
-
       # Add Self Signed Root CA
       - name: Add Self Signed Root CA
         run: |
@@ -67,6 +60,13 @@ jobs:
           sudo wget -O /usr/local/share/ca-certificates/U-Steck-nl-CA.crt "https://durand.nl/U-Steck-nl-CA.crt"
           sudo wget -O /usr/local/share/ca-certificates/Durand-Guru-Root-CA.pem "https://durand.nl/Durand-Guru-Root-CA.pem"
           sudo update-ca-certificates
+
+      # DNS - Setup
+      - name: DNS - Setup
+        run: |
+          sudo netplan set ethernets.eth0.nameservers.addresses="[10.252.11.11]"
+          sudo netplan set ethernets.eth0.dhcp4-overrides.use-dns="false"
+          sudo netplan apply
 
       # Setup Terraform Variables
       - name: Setup Terraform variables
