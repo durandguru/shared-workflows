@@ -61,13 +61,6 @@ jobs:
           sudo wget -O /usr/local/share/ca-certificates/Durand-Guru-Root-CA.pem "https://durand.nl/Durand-Guru-Root-CA.pem"
           sudo update-ca-certificates
 
-      # DNS - Setup
-      - name: DNS - Setup
-        run: |
-          sudo netplan set ethernets.eth0.nameservers.addresses="[10.252.11.11]"
-          sudo netplan set ethernets.eth0.dhcp4-overrides.use-dns="false"
-          sudo netplan apply
-
       # Setup Terraform Variables
       - name: Setup Terraform variables
         id: vars
@@ -83,6 +76,13 @@ jobs:
       # Terraform Init
       - name: Terraform Init
         run: terraform init -upgrade -reconfigure -backend-config=${{ inputs.device }}/${{ inputs.device }}.hcl
+
+      # DNS - Setup
+      - name: DNS - Setup
+        run: |
+          sudo netplan set ethernets.eth0.nameservers.addresses="[10.252.11.11]"
+          sudo netplan set ethernets.eth0.dhcp4-overrides.use-dns="false"
+          sudo netplan apply
 
       # Terraform Apply
       - name: Terraform Apply
