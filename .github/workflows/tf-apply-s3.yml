@@ -49,7 +49,7 @@ jobs:
 
       # Terraform Setup
       - name: Terraform Setup
-        uses: hashicorp/setup-terraform@v3.1.2
+        uses: hashicorp/setup-terraform@v4.0.0
 
       # Terraform Init
       - name: Terraform Init
